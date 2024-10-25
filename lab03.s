@@ -98,6 +98,36 @@ outShowRowLoop:
 # ----------------------------------------
 
 rgb888_to_rgb565:
+    add t1, zero, zero #counter for rows
+    add t3, zero, zero #saving the colors contents(red)
+    add t4, zero, zero #saving the colors contents(green)
+    add t5, zero, zero #saving the colors contents(blue)
+rowLoop:
+    bge t1, a2, exit
+    add t2, zero, zero #counter for colms
+colLoop:
+    bge t2, a1, addT1
+    lbu t3, 0(a0)#red
+    andi t3, t3, 0xf8 #skip the last three
+    slli t3, t3, 8 
+    lbu t4, 1(a0)#green
+    andi t4, t4, 0xfc
+    slli t4, t4, 3
+    lbu t5, 2(a0)
+    andi t5, t5, 0xf8
+    srli t5, t5, 3
+    or t3, t3, t4
+    or t3, t3, t5
+    sh t3, 0(a3)
+    addi a3, a3, 2
+    addi a0, a0, 3
+    addi t2, t2, 1
+    j colLoop
+addT1:
+    addi t1, t1, 1
+    j rowLoop
+exit:
+    jalr zero, ra, 0
 # ----------------------------------------
 # Write your code here.
 # You may move the "return" instruction (jalr zero, ra, 0).
